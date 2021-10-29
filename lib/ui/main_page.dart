@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:si413_project/ui/loading.dart';
 
-import 'list_page.dart';
+import 'lists_page.dart';
 import 'login_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -21,6 +21,6 @@ class _MainPageState extends State<MainPage> {
       builder: (context, snapshot) {
         if (snapshot.hasError) return const Loading();
         if (snapshot.data == null) return const LoginPage();
-        return ListPage(user: snapshot.data!);
+        return ListsPage(user: snapshot.data!);
       });
 }

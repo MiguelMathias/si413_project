@@ -2,15 +2,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'todo.dart';
 
-@JsonSerializable()
-class User {
+part 'user.g.dart';
+
+@JsonSerializable(explicitToJson: true)
+class UserData {
   final String displayName;
   final String uid;
   final List<ListItem> listItems = [];
 
-  User({required this.displayName, required this.uid});
+  UserData({required this.displayName, required this.uid});
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory UserData.fromJson(Map<String, dynamic> json) =>
+      _$UserDataFromJson(json);
 
-  Map<String, Object?> toJson() => _$UserToJson(this);
+  Map<String, Object?> toJson() => _$UserDataToJson(this);
 }

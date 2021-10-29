@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -7,6 +8,16 @@ class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   Future<UserCredential> signInWithGoogle() async {
+    if (kIsWeb) {
+      // Create a new provider
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      //googleProvider
+      //    .addScope('https://www.googleapis.com/auth/contacts.readonly');
+      //googleProvider.setCustomParameters({'login_hint': 'user@example.com'});
+
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    }
     // Trigger the authentication flow
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
