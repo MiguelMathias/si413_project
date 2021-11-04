@@ -8,9 +8,9 @@ part 'user.g.dart';
 class UserData {
   final String displayName;
   final String uid;
-  final List<ListItem> listItems = [];
+  List<ListItem> lists = [];
 
-  UserData({required this.displayName, required this.uid});
+  UserData(this.lists, {required this.displayName, required this.uid});
 
   factory UserData.fromJson(Map<String, dynamic> json) =>
       _$UserDataFromJson(json);

@@ -7,6 +7,7 @@ import 'package:si413_project/model/user.dart';
 import 'package:si413_project/ui/loading.dart';
 
 import 'list_page.dart';
+import 'new_list_page.dart';
 
 class ListsPage extends StatefulWidget {
   final User user;
@@ -26,40 +27,46 @@ class _ListsPageState extends State<ListsPage> {
       .snapshots();
 
   @override
-  Widget build(BuildContext context) => CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('Lists'),
-      ),
-      child: StreamBuilder<DocumentSnapshot<UserData>>(
+  Widget build(BuildContext context) =>
+      StreamBuilder<DocumentSnapshot<UserData>>(
         stream: userDataRef(),
         builder: (context, snapshot) {
           if (!snapshot.hasData || snapshot.data == null) {
             return const Loading();
           }
-          print(snapshot.data?.data()?.toJson());
-          return ListView(
-            children: snapshot.data
-                    ?.data()
-                    ?.listItems
-                    .map((listItem) => CupertinoListTile(
-                          leading: Container(
-                            width: 15,
-                            height: 15,
-                            decoration: BoxDecoration(
-                                color: listItem.color, shape: BoxShape.circle),
-                          ),
-                          title: Text(listItem.name),
-                          onTap: () => Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) => ListPage(
-                                        user: widget.user,
-                                        listUid: listItem.uid,
-                                      ))),
-                        ))
-                    .toList() ??
-                [],
+          return CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+              middle: const Text('Lists'),
+              trailing: CupertinoButton(
+                child: const Icon(CupertinoIcons.add),
+                onPressed: () => Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => NewListPage())),
+              ),
+            ),
+            child: ListView(
+              children: snapshot.data
+                      ?.data()
+                      ?.lists
+                      .map((listItem) => CupertinoListTile(
+                            leading: Container(
+                              width: 15,
+                              height: 15,
+                              decoration: BoxDecoration(
+                                  color: listItem.color,
+                                  shape: BoxShape.circle),
+                            ),
+                            title: Text(listItem.name),
+                            onTap: () => Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) => ListPage(
+                                          listItem: listItem,
+                                        ))),
+                          ))
+                      .toList() ??
+                  [],
+            ),
           );
         },
-      ));
+      );
 }

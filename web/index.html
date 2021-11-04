@@ -49,6 +49,7 @@
 
 			// Initialize Firebase
 			firebase.initializeApp(firebaseConfig)
+			firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
 		</script>
 		<script>
 			var serviceWorkerVersion = null

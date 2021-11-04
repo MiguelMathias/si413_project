@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -9,14 +8,14 @@ class ListItem {
   String name;
   @JsonKey(fromJson: colorFromJson, toJson: colorToJson)
   Color color;
-  String uid;
+  List<TodoItem> items;
 
   static Color colorFromJson(Map<String, dynamic> json) =>
       Color.fromARGB(json['a'], json['r'], json['g'], json['b']);
   static Map<String, dynamic> colorToJson(Color color) =>
       {'a': color.alpha, 'r': color.red, 'g': color.green, 'b': color.blue};
 
-  ListItem(this.color, {required this.name, required this.uid});
+  ListItem({required this.color, required this.name, required this.items});
 
   factory ListItem.fromJson(Map<String, dynamic> json) =>
       _$ListItemFromJson(json);
@@ -25,29 +24,18 @@ class ListItem {
 
 @JsonSerializable(explicitToJson: true)
 class TodoItem {
-  String userUid;
-  String listUid;
   String title;
-  String uid;
   String? notes;
   TodoItemDetails? details;
-
-  @JsonKey(fromJson: tsFromJson, toJson: tsToJson)
-  Timestamp added;
-
-  static Timestamp tsFromJson(Map<String, dynamic> json) =>
-      Timestamp.fromMillisecondsSinceEpoch(json['millis']);
-  static Map<String, dynamic> tsToJson(Timestamp ts) =>
-      {'millis': ts.millisecondsSinceEpoch};
+  int added;
+  int done;
 
   TodoItem(
     this.notes,
-    this.details,
-    this.added, {
-    required this.listUid,
+    this.details, {
+    required this.done,
+    required this.added,
     required this.title,
-    required this.uid,
-    required this.userUid,
   });
 
   factory TodoItem.fromJson(Map<String, dynamic> json) =>

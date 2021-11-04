@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'ui/loading.dart';
@@ -16,12 +18,22 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final _firebaseInit = Firebase.initializeApp();
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _firebaseInit,
+      future: () async {
+        final firebaseInit = Firebase.initializeApp();
+        if (kIsWeb) {
+          await FirebaseFirestore.instance.enablePersistence();
+        } else {
+          FirebaseFirestore.instance.settings = const Settings(
+              persistenceEnabled: true,
+              cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+        }
+        //Disable network
+        //await FirebaseFirestore.instance.disableNetwork()
+        return firebaseInit;
+      }(),
       builder: (context, snapshot) {
         //if(snapshot.hasError)
         if (snapshot.connectionState == ConnectionState.done) {
