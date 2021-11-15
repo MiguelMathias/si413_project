@@ -14,5 +14,9 @@ class _TodoAppState extends State<TodoApp> {
   @override
   Widget build(BuildContext context) => const MediaQuery(
       data: MediaQueryData(),
-      child: CupertinoApp(title: 'SI413 ToDo', home: MainPage()));
+      child: CupertinoApp(
+        title: 'SI413 ToDo',
+        home: MainPage(),
+        debugShowCheckedModeBanner: false,
+      ));
 }

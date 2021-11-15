@@ -38,7 +38,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => CupertinoPageScaffold(
           child: Center(
-        child: CupertinoButton(
+        child: CupertinoButton.filled(
             onPressed: () => signInWithGoogle(),
             child: const Text('Log In With Google')),
       ));
