@@ -76,7 +76,7 @@ class _ItemPageState extends State<ItemPage> {
 
                     widget.userDataRef
                         .set(widget.userData)
-                        .then((value) => Navigator.pop(context));
+                        .whenComplete(() => Navigator.pop(context));
                   }
                 : null,
           )),
@@ -144,7 +144,7 @@ class _ItemPageState extends State<ItemPage> {
                                           child: const Text('Cancel'),
                                           onPressed: () => setState(() {
                                             newItem.date = null;
-                                            Navigator.of(context).pop();
+                                            Navigator.pop(context);
                                           }),
                                         ),
                                         const Spacer(),
@@ -153,7 +153,7 @@ class _ItemPageState extends State<ItemPage> {
                                           onPressed: () => setState(() {
                                             newItem.date =
                                                 newItem.date ?? DateTime.now();
-                                            Navigator.of(context).pop();
+                                            Navigator.pop(context);
                                           }),
                                         )
                                       ],

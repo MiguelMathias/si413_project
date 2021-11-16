@@ -306,8 +306,7 @@ class _ListsPageState extends State<ListsPage> {
                                     builder: (context) => ItemsPage(
                                         listItemUid: listItem.uid,
                                         userData: snapshot.data!.data()!,
-                                        userDataRef: userDataRef,
-                                        title: listItem.name))),
+                                        userDataRef: userDataRef))),
                           ),
                           endActionPane: ActionPane(
                               motion: const DrawerMotion(),

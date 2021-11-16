@@ -11,6 +11,7 @@ class ListPage extends StatefulWidget {
   final UserData userData;
   final bool isAdding;
   final ListItem list;
+
   const ListPage(
       {Key? key,
       required this.userDataRef,
@@ -53,7 +54,7 @@ class _ListPageState extends State<ListPage> {
                     }
                     widget.userDataRef
                         .set(widget.userData)
-                        .then((value) => Navigator.pop(context));
+                        .whenComplete(() => Navigator.pop(context));
                   }
                 : null),
       ),
@@ -166,8 +167,9 @@ class _DeleteListDialogState extends State<DeleteListDialog> {
             onPressed: () {
               widget.userData.lists
                   .removeWhere((list) => list.uid == listItem.uid);
-              widget.userDataRef.set(widget.userData);
-              Navigator.pop(context);
+              widget.userDataRef
+                  .set(widget.userData)
+                  .whenComplete(() => Navigator.pop(context));
               if (widget.deleteAction != null) widget.deleteAction!();
             },
           )

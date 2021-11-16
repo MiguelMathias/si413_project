@@ -17,7 +17,7 @@ class ItemsPage extends StatefulWidget {
   final String listItemUid;
   final UserData userData;
   final DocumentReference<UserData> userDataRef;
-  final String title;
+  final String? title;
   final int Function(TodoItem, TodoItem)? sort;
   final bool Function(TodoItem)? filter;
 
@@ -26,7 +26,7 @@ class ItemsPage extends StatefulWidget {
       required this.listItemUid,
       required this.userData,
       required this.userDataRef,
-      required this.title,
+      this.title,
       this.sort,
       this.filter})
       : super(key: key);
@@ -60,7 +60,10 @@ class _ItemsPageState extends State<ItemsPage> {
         return CupertinoPageScaffold(
           navigationBar: CupertinoNavigationBar(
             previousPageTitle: 'Home',
-            middle: Text(widget.title),
+            middle: Text(widget.title ??
+                widget.userData.lists
+                    .firstWhere((list) => list.uid == widget.listItemUid)
+                    .name),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -70,7 +73,11 @@ class _ItemsPageState extends State<ItemsPage> {
                     onPressed: () => showCupertinoModalBottomSheet(
                         context: context,
                         builder: (context) => ItemPage(
-                              prevPageTitle: widget.title,
+                              prevPageTitle: widget.title ??
+                                  widget.userData.lists
+                                      .firstWhere((list) =>
+                                          list.uid == widget.listItemUid)
+                                      .name,
                               item: TodoItem('', null, [], false, null,
                                   added: 0, done: 0, title: ''),
                               listUid: widget.listItemUid,
@@ -147,6 +154,25 @@ class _ItemsPageState extends State<ItemsPage> {
                                     Navigator.pop(context);
                                   },
                                 ),
+                                if (widget.listItemUid.isNotEmpty)
+                                  CupertinoActionSheetAction(
+                                      child: const Text('Show List Details'),
+                                      onPressed: () => showCupertinoModalBottomSheet(
+                                              context: context,
+                                              builder: (context) =>
+                                                  ListPage(
+                                                      userData: snapshot.data!
+                                                          .data()!,
+                                                      userDataRef: widget
+                                                          .userDataRef,
+                                                      list: widget
+                                                          .userData.lists
+                                                          .firstWhere((list) =>
+                                                              list.uid ==
+                                                              widget
+                                                                  .listItemUid)))
+                                          .whenComplete(
+                                              () => Navigator.pop(context))),
                                 if (widget.listItemUid.isNotEmpty)
                                   CupertinoActionSheetAction(
                                     child: const Text('Delete List',
@@ -251,7 +277,14 @@ class _ItemsPageState extends State<ItemsPage> {
                                   showCupertinoModalBottomSheet(
                                       context: context,
                                       builder: (context) => ItemPage(
-                                          prevPageTitle: widget.title,
+                                          prevPageTitle: widget
+                                                  .title ??
+                                              widget
+                                                  .userData.lists
+                                                  .firstWhere((list) =>
+                                                      list.uid ==
+                                                      widget.listItemUid)
+                                                  .name,
                                           item: todoItem,
                                           listUid: widget.listItemUid,
                                           userData: widget.userData,
