@@ -72,18 +72,28 @@ class _ItemsPageState extends State<ItemsPage> {
                     child: const Icon(CupertinoIcons.add),
                     onPressed: () => showCupertinoModalBottomSheet(
                         context: context,
-                        builder: (context) => ItemPage(
-                              prevPageTitle: widget.title ??
-                                  widget.userData.lists
-                                      .firstWhere((list) =>
-                                          list.uid == widget.listItemUid)
-                                      .name,
-                              item: TodoItem('', null, [], false, null,
-                                  added: 0, done: 0, title: ''),
-                              listUid: widget.listItemUid,
-                              userData: widget.userData,
-                              userDataRef: widget.userDataRef,
-                              isAdding: true,
+                        builder: (context) => CupertinoTheme(
+                              data: CupertinoTheme.of(context).copyWith(
+                                  primaryColor: widget.listItemUid.isNotEmpty
+                                      ? widget.userData.lists
+                                          .firstWhere((list) =>
+                                              list.uid == widget.listItemUid)
+                                          .color
+                                      : CupertinoTheme.of(context)
+                                          .primaryColor),
+                              child: ItemPage(
+                                prevPageTitle: widget.title ??
+                                    widget.userData.lists
+                                        .firstWhere((list) =>
+                                            list.uid == widget.listItemUid)
+                                        .name,
+                                item: TodoItem('', null, [], false, null,
+                                    added: 0, done: 0, title: ''),
+                                listUid: widget.listItemUid,
+                                userData: widget.userData,
+                                userDataRef: widget.userDataRef,
+                                isAdding: true,
+                              ),
                             )),
                   ),
                 CupertinoButton(

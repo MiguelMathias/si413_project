@@ -303,10 +303,15 @@ class _ListsPageState extends State<ListsPage> {
                             onTap: () => Navigator.push(
                                 context,
                                 CupertinoPageRoute(
-                                    builder: (context) => ItemsPage(
-                                        listItemUid: listItem.uid,
-                                        userData: snapshot.data!.data()!,
-                                        userDataRef: userDataRef))),
+                                    builder: (context) => CupertinoTheme(
+                                          data: CupertinoTheme.of(context)
+                                              .copyWith(
+                                                  primaryColor: listItem.color),
+                                          child: ItemsPage(
+                                              listItemUid: listItem.uid,
+                                              userData: snapshot.data!.data()!,
+                                              userDataRef: userDataRef),
+                                        ))),
                           ),
                           endActionPane: ActionPane(
                               motion: const DrawerMotion(),
