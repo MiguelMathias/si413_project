@@ -76,6 +76,7 @@ class _ListPageState extends State<ListPage> {
                       placeholder: 'Name',
                       onChanged: (val) => setState(() => newList.name = val),
                       controller: nameFieldController,
+                      autofocus: true,
                     ),
                     trailing: const SizedBox.shrink(),
                   ),
