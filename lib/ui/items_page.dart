@@ -79,13 +79,12 @@ class _ItemsPageState extends State<ItemsPage> {
         if (!snapshot.hasData) {
           return const Loading();
         }
-        final userData = snapshot.data!.data()!;
 
         return CupertinoTheme(
           //The current theme should be the list's color, or the default
           data: widget.listItemUid.isNotEmpty
               ? CupertinoTheme.of(context).copyWith(
-                  primaryColor: userData.lists
+                  primaryColor: widget.userData.lists
                       .firstWhere((list) => list.uid == widget.listItemUid)
                       .color)
               : CupertinoTheme.of(context),
@@ -95,7 +94,7 @@ class _ItemsPageState extends State<ItemsPage> {
               previousPageTitle: 'Home',
               middle: Text(widget
                       .title ?? //If no title provided, show the list's (found by list uid) name
-                  userData.lists
+                  widget.userData.lists
                       .firstWhere((list) => list.uid == widget.listItemUid)
                       .name),
               trailing: Row(
@@ -111,7 +110,7 @@ class _ItemsPageState extends State<ItemsPage> {
                           builder: (context) => CupertinoTheme(
                                 data: CupertinoTheme.of(context).copyWith(
                                     primaryColor: widget.listItemUid.isNotEmpty
-                                        ? userData.lists
+                                        ? widget.userData.lists
                                             .firstWhere((list) =>
                                                 list.uid == widget.listItemUid)
                                             .color
@@ -119,14 +118,14 @@ class _ItemsPageState extends State<ItemsPage> {
                                             .primaryColor),
                                 child: ItemPage(
                                   prevPageTitle: widget.title ??
-                                      userData.lists
+                                      widget.userData.lists
                                           .firstWhere((list) =>
                                               list.uid == widget.listItemUid)
                                           .name,
                                   item: TodoItem('', null, [], false, null,
                                       added: 0, done: 0, title: ''),
                                   listUid: widget.listItemUid,
-                                  userData: userData,
+                                  userData: widget.userData,
                                   userDataRef: widget.userDataRef,
                                   isAdding: true,
                                 ),
@@ -211,7 +210,7 @@ class _ItemsPageState extends State<ItemsPage> {
                                             builder: (context) =>
                                                 DeleteListDialog(
                                                     listUid: widget.listItemUid,
-                                                    userData: userData,
+                                                    userData: widget.userData,
                                                     deleteAction: () =>
                                                         Navigator.pop(context),
                                                     userDataRef: widget
@@ -284,15 +283,15 @@ class _ItemsPageState extends State<ItemsPage> {
                               todoItem.done = todoItem.done == 0
                                   ? DateTime.now().millisecondsSinceEpoch
                                   : 0;
-                              final listToModify = userData.lists.firstWhere(
-                                  (list) => list.items
+                              final listToModify = widget.userData.lists
+                                  .firstWhere((list) => list.items
                                       .where((item) => item.uid == todoItem.uid)
                                       .isNotEmpty);
                               listToModify.items
                                   .firstWhere(
                                       (item) => todoItem.uid == item.uid)
                                   .done = todoItem.done;
-                              widget.userDataRef.set(userData);
+                              widget.userDataRef.set(widget.userData);
                             },
                           ),
                           title: Text(todoItem.title),
@@ -310,7 +309,7 @@ class _ItemsPageState extends State<ItemsPage> {
                                           .name,
                                   item: todoItem,
                                   listUid: widget.listItemUid,
-                                  userData: userData,
+                                  userData: widget.userData,
                                   userDataRef: widget.userDataRef)),
                         ),
                         endActionPane: ActionPane(
@@ -332,7 +331,7 @@ class _ItemsPageState extends State<ItemsPage> {
                                                     .name,
                                             item: todoItem,
                                             listUid: widget.listItemUid,
-                                            userData: userData,
+                                            userData: widget.userData,
                                             userDataRef: widget.userDataRef))),
                             SlidableAction(
                                 backgroundColor: Colors.orange,
@@ -340,7 +339,7 @@ class _ItemsPageState extends State<ItemsPage> {
                                 label: todoItem.flag ? 'Unflag' : 'Flag',
                                 icon: CupertinoIcons.flag_fill,
                                 onPressed: (context) {
-                                  final listToModify = userData.lists
+                                  final listToModify = widget.userData.lists
                                       .firstWhere((list) => list.items
                                           .where((item) =>
                                               item.uid == todoItem.uid)
@@ -349,21 +348,21 @@ class _ItemsPageState extends State<ItemsPage> {
                                       .firstWhere(
                                           (item) => item.uid == todoItem.uid)
                                       .flag = !todoItem.flag;
-                                  widget.userDataRef.set(userData);
+                                  widget.userDataRef.set(widget.userData);
                                 }),
                             SlidableAction(
                                 backgroundColor: Colors.red,
                                 label: 'Delete',
                                 icon: CupertinoIcons.delete,
                                 onPressed: (context) {
-                                  final listToModify = userData.lists
+                                  final listToModify = widget.userData.lists
                                       .firstWhere((list) => list.items
                                           .where((item) =>
                                               item.uid == todoItem.uid)
                                           .isNotEmpty);
                                   listToModify.items.removeWhere(
                                       (item) => item.uid == todoItem.uid);
-                                  widget.userDataRef.set(userData);
+                                  widget.userDataRef.set(widget.userData);
                                 })
                           ],
                         )),
