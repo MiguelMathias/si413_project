@@ -15,7 +15,9 @@ import 'package:si413_project/ui/loading.dart';
 import 'items_page.dart';
 import 'list_page.dart';
 
+///A widget to show a page of the user's lists, the home page essentially
 class ListsPage extends StatefulWidget {
+  ///The current user
   final User user;
 
   const ListsPage({Key? key, required this.user}) : super(key: key);
@@ -25,11 +27,14 @@ class ListsPage extends StatefulWidget {
 }
 
 class _ListsPageState extends State<ListsPage> {
+  ///The user data firestore document reference
   late DocumentReference<UserData> userDataRef;
 
   @override
   void initState() {
     super.initState();
+
+    ///Set the user data firestore document reference
     userDataRef = FirebaseFirestore.instance
         .doc('users/${widget.user.uid}')
         .withConverter<UserData>(
@@ -40,27 +45,34 @@ class _ListsPageState extends State<ListsPage> {
   @override
   Widget build(BuildContext context) =>
       StreamBuilder<DocumentSnapshot<UserData>>(
+        //Listen to the stream of user data document changes
         stream: userDataRef.snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             userDataRef.get().then((userDataDoc) {
+              //If the user data doesn't exist, set it as the default user data doc for the current firebase user
               if (!userDataDoc.exists) {
                 userDataRef.set(UserData([],
                     displayName: widget.user.displayName ?? '',
                     uid: widget.user.uid));
               }
             });
+            //Return loading while the snapshot has no data
             return const Loading();
           }
 
           final UserData userData = snapshot.data!.data()!;
+
           return CupertinoPageScaffold(
+            //A Cupertino Page with a nav bar
             navigationBar: CupertinoNavigationBar(
                 leading: CupertinoButton(
+                    //The logout button
                     child: const Icon(CupertinoIcons.escape),
                     onPressed: () => FirebaseAuth.instance.signOut()),
                 middle: Text(widget.user.displayName ?? ''),
                 trailing: CupertinoButton(
+                    //A button to bring up a list modal
                     child: const Icon(CupertinoIcons.add),
                     onPressed: () => showCupertinoModalBottomSheet(
                         context: context,
@@ -73,6 +85,9 @@ class _ListsPageState extends State<ListsPage> {
             child: GroupedComponent(
               groups: [
                 [
+                  //The first group is the first two filtered lists: 'Today' and 'Scheduled'.
+                  //I didn't extract these filtered lists into components even though I probably should've
+                  //because they each had very particular props that they were passing to their children
                   Container(
                       decoration: BoxDecoration(
                           color: CupertinoTheme.of(context)
@@ -98,6 +113,7 @@ class _ListsPageState extends State<ListsPage> {
                                             userData: snapshot.data!.data()!,
                                             userDataRef: userDataRef,
                                             title: 'Due Today',
+                                            //Filter all the list items by the ones that are due today
                                             filter: (item) {
                                               if (item.date != null) {
                                                 final now = DateTime.now();
@@ -109,6 +125,7 @@ class _ListsPageState extends State<ListsPage> {
                                               }
                                               return false;
                                             },
+                                            //Sort the list items by their due date
                                             sort: (itemA, itemB) {
                                               if (itemA.date != null &&
                                                   itemB.date != null) {
@@ -154,8 +171,10 @@ class _ListsPageState extends State<ListsPage> {
                                           userData: snapshot.data!.data()!,
                                           userDataRef: userDataRef,
                                           title: 'Scheduled',
+                                          //Filter the list items, retaining all with a due date
                                           filter: (item) => item.date != null,
                                           sort: (itemA, itemB) {
+                                            //Sort the list items by their due date
                                             if (itemA.date != null &&
                                                 itemB.date != null) {
                                               return itemA.date!
@@ -183,6 +202,7 @@ class _ListsPageState extends State<ListsPage> {
                       ))
                 ],
                 [
+                  //The second group is next two filtered list buttons: 'All' and 'Flagged'
                   Container(
                       decoration: BoxDecoration(
                           color: CupertinoTheme.of(context)
@@ -204,6 +224,7 @@ class _ListsPageState extends State<ListsPage> {
                                       context,
                                       CupertinoPageRoute(
                                         builder: (context) => ItemsPage(
+                                            //The empty list uid and no filtering will show all user todo items
                                             listItemUid: '',
                                             userData: snapshot.data!.data()!,
                                             userDataRef: userDataRef,
@@ -245,6 +266,7 @@ class _ListsPageState extends State<ListsPage> {
                                               userData: snapshot.data!.data()!,
                                               userDataRef: userDataRef,
                                               title: 'Flagged',
+                                              //Filter all items by if they're flagged or not
                                               filter: (item) => item.flag,
                                             ))),
                                 child: Column(children: [
@@ -266,6 +288,7 @@ class _ListsPageState extends State<ListsPage> {
                       ))
                 ],
                 [
+                  //A title to display 'My Lists' above the list of user todo lists
                   Container(
                       decoration: BoxDecoration(
                           color: CupertinoTheme.of(context)
@@ -289,6 +312,7 @@ class _ListsPageState extends State<ListsPage> {
                         ],
                       ))
                 ],
+                //The user todo lists mapped into slidable list tile buttons
                 userData.lists
                     .map((listItem) => Slidable(
                           child: CupertinoListTile(
@@ -301,22 +325,19 @@ class _ListsPageState extends State<ListsPage> {
                             ),
                             title: Text(listItem.name),
                             onTap: () => Navigator.push(
+                                //When clicked, navigate to that list's items page
                                 context,
                                 CupertinoPageRoute(
-                                    builder: (context) => CupertinoTheme(
-                                          data: CupertinoTheme.of(context)
-                                              .copyWith(
-                                                  primaryColor: listItem.color),
-                                          child: ItemsPage(
-                                              listItemUid: listItem.uid,
-                                              userData: snapshot.data!.data()!,
-                                              userDataRef: userDataRef),
-                                        ))),
+                                    builder: (context) => ItemsPage(
+                                        listItemUid: listItem.uid,
+                                        userData: snapshot.data!.data()!,
+                                        userDataRef: userDataRef))),
                           ),
                           endActionPane: ActionPane(
                               motion: const DrawerMotion(),
                               children: [
                                 SlidableAction(
+                                    //Action to bring up the list editing page as a modal
                                     backgroundColor: Colors.grey.shade700,
                                     label: 'Details',
                                     icon: CupertinoIcons.info_circle_fill,
@@ -329,6 +350,7 @@ class _ListsPageState extends State<ListsPage> {
                                                 userDataRef: userDataRef,
                                                 list: listItem))),
                                 SlidableAction(
+                                    //Action to delete the list. Brings up the delete list dialog
                                     backgroundColor: Colors.red,
                                     label: 'Delete',
                                     icon: CupertinoIcons.delete,

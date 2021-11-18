@@ -1,16 +1,26 @@
 # si413_project
 
-A new Flutter project.
+SI413 ToDo app, Cupertino Style. Currently hosted at https://si413-project.web.app/
 
-## Getting Started
+## To Run
 
-This project is a starting point for a Flutter application.
+To debug in chrome, simply navigate to the base directory and type
 
-A few resources to get you started if this is your first Flutter project:
+`flutter run -d chrome`
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Remarks
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Overall, Flutter is an amazing framework to work with. Dart isn't as expressive,
+intuitive, or clean as Typescript is with React (in my opinion), but the declarative
+style is easy to read, understand, and create with.
+
+## Shortcomings
+
+There's a few bugs I'm vaguely aware of, but for one weekend's work and a first
+time experience with Flutter and second time experience with Dart, not bad for
+a TodoApp that is completely functional. Firestore data and client side 
+data modeling strategy is very naive and not expandable/modular, but it works
+for the simplicity of the app. Would've like to add a few more features,
+like in the filtered lists having each item's completion button color be its list
+color and a few other tweaks of that nature, but overall happy with how it turned
+out.

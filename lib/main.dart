@@ -8,10 +8,12 @@ import 'package:flutter/material.dart';
 import 'ui/loading.dart';
 import 'ui/todo_app.dart';
 
+///The main method. Run the app.
 void main() {
   runApp(const App());
 }
 
+///The main app widget.
 class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
 
@@ -23,28 +25,34 @@ class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
+      //A future builder to wait on the Firebase app initialization
       future: () async {
         final firebaseInit = Firebase.initializeApp();
+        //If we're on the web
         if (kIsWeb) {
+          //Set firebase authentication persistence to local so our login state persists across sessions
           await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
+          //Enable firestore persistence so the app works offline.
+          //Any change made offline are pushed to Firebase when reconnected.
           await FirebaseFirestore.instance.enablePersistence();
         } else {
+          //If we're not on the web, we have a slightly different init flow
           FirebaseFirestore.instance.settings = const Settings(
               persistenceEnabled: true,
               cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
         }
-        //Disable network
-        //await FirebaseFirestore.instance.disableNetwork()
         return firebaseInit;
       }(),
       builder: (context, snapshot) {
         //if(snapshot.hasError)
-        if (snapshot.connectionState == ConnectionState.done) {
-          return const TodoApp();
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const MediaQuery(
+              //While we're waiting on initialization, return a Cupertino App of just the Loading Page
+              data: MediaQueryData(),
+              child: CupertinoApp(title: 'SI413 ToDo', home: Loading()));
         }
-        return const MediaQuery(
-            data: MediaQueryData(),
-            child: CupertinoApp(title: 'SI413 ToDo', home: Loading()));
+        //When finished intializing firebase, return the TodoApp
+        return const TodoApp();
       },
     );
   }
